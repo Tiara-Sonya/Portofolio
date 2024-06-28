@@ -2,6 +2,10 @@
 module.exports = {
   content: ['index.php'],
   theme: {
+    container: {
+      center: true,
+      padding: '16px',
+    },
     extend: {
       colors: {
         primary: '#14142B', 

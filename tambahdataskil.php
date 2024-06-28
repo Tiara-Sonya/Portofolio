@@ -14,10 +14,10 @@ if ($conn->connect_error) {
 }
 
 // ambil data dari formulir
-$id_skilss = $_POST['id_skilss'];
+$id_skilss = $_POST['id_skills'];
 $name = $_POST['name'];
 $level = $_POST['level'];
-$link_foto = $_POST['link_foto'];
+$foto = $_POST['foto'];
 
 // cek apakah id_skills sudah ada di database
 $id_check_query = "SELECT * FROM skills WHERE id_skills='$id_skills' LIMIT 1";
@@ -32,12 +32,12 @@ $name_exists = mysqli_fetch_assoc($name_check_result);
 // query untuk menyimpan data ke database jika tidak ada duplikat
 if (!$id_exists && !$name_exists) {
     // query untuk menyimpan data ke database
-    $query = "INSERT INTO skills (id_skills, name, level, link_foto) 
-              VALUES ('$id_skills', '$name', '$level', '$link_foto')";
+    $query = "INSERT INTO skills (id_skills, name, level, foto) 
+              VALUES ('$id_skills', '$name', '$level', '$foto')";
 
     if (mysqli_query($conn, $query)) {
         echo "<script>alert('Data berhasil disimpan');</script>";
-        echo "<script>window.location.href='datatraining.php';</script>";
+        echo "<script>window.location.href='admin.php';</script>";
     } else {
         echo "Error: " . $query . "<br>" . mysqli_error($conn);
     }
@@ -49,8 +49,8 @@ if (!$id_exists && !$name_exists) {
     echo "<script>window.location.href='admin.php#formTambah';</script>";
 } else {
     // query untuk menyimpan data ke database karena duplikat field-field lainnya diperbolehkan
-    $query = "INSERT INTO skills (id_skills, name, level, link_foto) 
-              VALUES ('$id_skills', '$name', '$level', '$link_foto')";
+    $query = "INSERT INTO skills (id_skills, name, level, foto) 
+              VALUES ('$id_skills', '$name', '$level', '$foto')";
 
     if (mysqli_query($conn, $query)) {
         echo "<script>alert('Data berhasil disimpan');</script>";

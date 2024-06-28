@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
     $result = mysqli_query($conn, $query);
 
     if ($result) {
-        // Jika berhasil dihapus, arahkan ke halaman datatraining.php
+        // Jika berhasil dihapus, arahkan ke halaman admin.php
         header("Location: admin.php");
         exit();
     } else {
@@ -26,3 +26,4 @@ if (isset($_GET['id'])) {
 } else {
     echo "ID tidak valid.";
 }
+?>

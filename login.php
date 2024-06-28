@@ -13,47 +13,39 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fungsi untuk mengecek login
-function checkLogin($conn, $username, $password)
-{
-    // Ambil data pengguna dari database berdasarkan username
-    $stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    // Jika username ditemukan
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        // Verifikasi password dengan password hash
-        if (password_verify($password, $user['password'])) {
-            return true;
-        }
-    }
-
-    // Username tidak ditemukan atau password tidak sesuai
-    return false;
-}
-
-// Proses form login
+// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    // Escape user inputs to prevent SQL injection
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
 
-    if (checkLogin($conn, $username, $password)) {
-        // Login berhasil, atur session dan arahkan ke halaman index.php
-        session_start();
-        $_SESSION["login"] = true;
-        header("Location: admin.php");
-        exit();
+    // Query to check if the entered username and password exist in the database
+    $query = "SELECT * FROM admin WHERE username='$username' AND password='$password'";
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        // Check if a row is returned (valid username and password)
+        if (mysqli_num_rows($result) == 1) {
+            // Fetch user data and store it in the session
+            $_SESSION['username'] = $username;
+
+            // Redirect to the admin.php page upon successful login
+            header("Location: admin.php");
+            exit();
+        } else {
+            // Invalid username or password, show an alert
+            echo '<script>alert("Username or password is incorrect. Please try again.");</script>';
+        }
     } else {
-        $loginError = "Username atau password salah.";
+        // Error in the query
+        echo '<script>alert("Error in the query.");</script>';
     }
-}
 
-// Tutup koneksi database
-$conn->close();
+    // Close the database connection
+    mysqli_close($conn);
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -63,11 +55,11 @@ $conn->close();
     <title>Login Admin - Portofolio Tiara Sonya</title>
     <link href="dist/output.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link rel="icon" href="image/logo.png">
+    <link rel="icon" href="dist/image/logo.png">
 </head>
 <body class="flex items-center justify-center w-full object-cover h-screen bg-black">
     <div class="absolute bg-white p-8 rounded-lg text-center max-w-sm w-full">
-        <img src="image/logo.png" alt="" class= "mx-auto mb-4 w-24 h-auto">    
+        <img src="dist/image/logo.png" alt="" class= "mx-auto mb-4 w-24 h-auto">    
         <h1 class="text-2xl font-bold text-secondary mb-4">Login Admin</h1>
         <form action="" method="POST" class="space-y-4">
             <div>
